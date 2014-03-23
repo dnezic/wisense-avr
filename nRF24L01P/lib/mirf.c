@@ -68,16 +68,19 @@ void mirf_config(uint8_t * txaddr, uint8_t * rxaddr, uint8_t mirf_CH, uint8_t mi
 	// Set RF channel
 	mirf_config_register(RF_CH, mirf_CH);
 
+	/* we are disabling dynamic payload in order to achieve better signal range */
+
 	// enabling and setting dynamic payload feature
 	// mirf_config_register( FEATURE, 1 << EN_DPL );
 
-	// Enable dynamic payloads
+	// enable dynamic payloads
 	// mirf_config_register(DYNPD, 1 << DPL_P0 | 1<<DPL_P1 | 1<<DPL_P2 | 1<<DPL_P3 | 1<<DPL_P4 | 1<<DPL_P5 );
 
-	// Disable dynamic payloads
+	// disable dynamic payloads
 	mirf_config_register(DYNPD, 0);
 
-	// Enable dyn ack
+	/* we are going to set manually NO_ACK flag on outgoing packets - dyn. ack. */
+	// enable dyn ack
 	mirf_config_register(FEATURE, 1 << EN_DYN_ACK);
 
 	// Disable auto ack
@@ -88,9 +91,6 @@ void mirf_config(uint8_t * txaddr, uint8_t * rxaddr, uint8_t mirf_CH, uint8_t mi
 
 	// Set 250KBPS mode, MAX power
 	mirf_config_register(RF_SETUP, (1 << RF_DR_LOW) | (0 << RF_DR_HIGH) | (1 << RF_PWR_LOW) | (1 << RF_PWR_HIGH));
-	
-	//byte RADDR[] = {0xe3, 0xf0, 0xf0, 0xf0, 0xf0};
-	//byte TADDR[] = {0xe3, 0xf0, 0xf0, 0xf0, 0xf0};
 	
 	// Set RADDR and TADDR
 	mirf_write_register(RX_ADDR_P0, txaddr, 5);
@@ -186,6 +186,7 @@ void mirf_send(uint8_t *value, uint8_t len) {
 	mirf_CSN_hi; // Pull up chip select
 
 	mirf_CSN_lo;  // Pull down chip select
+	/* explicitly set no ack flag on outgoing packets. */
 	spi_transfer(W_TX_PAYLOAD_NO_ACK); // Write cmd to write payload
 	spi_write_data(value, len); // Write payload
 	mirf_CSN_hi; // Pull up chip select

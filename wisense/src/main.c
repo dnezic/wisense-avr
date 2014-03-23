@@ -176,6 +176,7 @@ int main(void) {
 				_delay_ms(100);
 
 				// If maximum retries were reached, reset MAX_RT
+				/* FIXME: we are doing broadcast, so we don't use retries */
 				if (mirf_max_rt_reached()) {
 					mirf_config_register(STATUS, 1 << MAX_RT);
 					/* led flash:
@@ -184,7 +185,7 @@ int main(void) {
 					 mirf_CSN_hi;*/
 
 				}
-
+				/* FIXME: removed for testing */
 				//mirf_powerdown();	// put device in power down mode
 			}
 			counter = counter + 1;
