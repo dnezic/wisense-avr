@@ -32,11 +32,15 @@ avrdude -c usbasp -p t84 -U lfuse:r:-:h -U hfuse:r:-:h -U efuse:r:-:h -U lock:r:
 Calculate fuses using this website: [http://www.engbedded.com/fusecalc](http://www.engbedded.com/fusecalc).
 Divide clock by 8 internally; [CKDIV8=0] should be unchecked:
 
+####Write fuses
+
 ```bash
 avrdude -c usbasp -p t84 -U lfuse:w:0xe2:m -U hfuse:w:0xdf:m -U efuse:w:0xff:m
 ```
 
+####Flash program into the chip
+
 ```bash
-#> cd wisense/Release
-#> avrdude -p t84 -c usbasp -e -U flash:w:avr.hex
+cd wisense/Release
+avrdude -p t84 -c usbasp -e -U flash:w:avr.hex
 ```
