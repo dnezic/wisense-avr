@@ -91,6 +91,8 @@ void mirf_config(uint8_t * txaddr, uint8_t * rxaddr, uint8_t mirf_CH, uint8_t mi
 
 	// Set 250KBPS mode, MAX power
 	mirf_config_register(RF_SETUP, (1 << RF_DR_LOW) | (0 << RF_DR_HIGH) | (1 << RF_PWR_LOW) | (1 << RF_PWR_HIGH));
+	// Set 250KBPS mode, LOW power
+	//mirf_config_register(RF_SETUP, (1 << RF_DR_LOW) | (0 << RF_DR_HIGH) | (1 << RF_PWR_LOW));
 	
 	// Set RADDR and TADDR
 	mirf_write_register(RX_ADDR_P0, txaddr, 5);
