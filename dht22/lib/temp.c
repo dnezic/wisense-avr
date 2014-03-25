@@ -159,7 +159,7 @@ DHT22_ERROR_t readDHT22(DHT22_DATA_t* data) {
 void powerOnDHT22() {
 	DHT22_DDR |= 1 << (DHT22_POWER);
 	DHT22_PORT_OUT |= (1 << (DHT22_POWER));
-	_delay_ms(2500);
+	//_delay_ms(2500);
 }
 
 void powerOffDHT22() {
