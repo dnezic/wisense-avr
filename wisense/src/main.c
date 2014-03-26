@@ -33,6 +33,7 @@
 #define EEPROM_ADDRESS_1 50
 #define EEPROM_ADDRESS_2 51
 #define EEPROM_ADDRESS_3 52
+#define EEPROM_RESET_COUNTER 53
 
 #ifdef __AVR_ATtiny84__
 #define WDTCR WDTCSR
@@ -61,7 +62,7 @@
 
 /* flags controlling the sleep process */
 volatile boolean f_wdt = 1;
-volatile uint8_t wait_counter = 30;
+volatile uint8_t wait_counter = 29;
 volatile uint8_t wait_cycles = 32;
 
 // watchdog interrupt
@@ -132,30 +133,29 @@ void setup_watchdog() {
 
 }
 
-void setup() {
-	//spi_init();
-	setup_watchdog();
-	//mirf_init();
+void setup_mirf() {
+	spi_init();
+	mirf_init();
+	_delay_ms(50);
 }
 
 int main(void) {
 
-	uint8_t debug_byte;
-	debug_byte = 1;
-	eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_1, debug_byte);
+	uint8_t flow_byte;
 
 	uint8_t counter = 0;
+	uint8_t reset_counter = 0;
 	const uint8_t BUFFERSIZE = 8;
 	long voltage = 0;
 	byte RADDR[] = { 0xe3, 0xf0, 0xf0, 0xf0, 0xf0 };
 	byte TADDR[] = { 0xe3, 0xf0, 0xf0, 0xf0, 0xf0 };
 
-	setup();
-	// some delay to setup mirf
-	_delay_ms(100);
+	setup_watchdog();
 
-	debug_byte = 2;
-	eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_1, debug_byte);
+	/* store reset/power counter into eeprom */
+	reset_counter = eeprom_read_byte((uint8_t *) EEPROM_RESET_COUNTER);
+	reset_counter = reset_counter + 1;
+	eeprom_update_byte((uint8_t *) EEPROM_RESET_COUNTER, reset_counter);
 
 	while (1) {
 
@@ -164,17 +164,12 @@ int main(void) {
 			f_wdt = 0;			// reset flag
 			if (wait_counter >= wait_cycles) {
 
-
-				//_delay_ms(1000);
-
-
+				flow_byte = 0;
 
 				DHT22_DATA_t data;
 				DHT22_ERROR_t error;
 
-
-				debug_byte = 0;
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
+				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 
 				cli();
 				powerOnDHT22();
@@ -182,36 +177,20 @@ int main(void) {
 				powerOffDHT22();
 				sei();
 
+				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
+
 				/* reinit */
-				spi_init();
-				mirf_init();
-				_delay_ms(50);
-
-				debug_byte = 1;
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
-
+				setup_mirf();
 
 				mirf_config(TADDR, RADDR, mirf_CH, BUFFERSIZE);
 
-
-
 				wait_counter = 0;
 
-				// delay
-				//_delay_ms(1000);
-
-				debug_byte = 2;
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
+				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 
 				voltage = read_vcc();
 
-				debug_byte = 3;
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
-
-
-
-				//debug_byte = 4;
-				//eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
+				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 
 				uint8_t buffer[8] = { voltage >> 8, voltage & 0xff,
 						data.humidity_integral, data.humidity_decimal,
@@ -219,14 +198,12 @@ int main(void) {
 						error, counter };
 
 				mirf_flush_rx_tx();					// flush TX/RX
-				//_delay_ms(50);
 				mirf_send(buffer, BUFFERSIZE);
 
 				// unnecessary delay ?
 				_delay_ms(100);
 
-				debug_byte = 5;
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
+				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 
 				// If maximum retries were reached, reset MAX_RT
 				/* FIXME: we are doing broadcast, so we don't use retries */
@@ -236,18 +213,13 @@ int main(void) {
 					 mirf_CSN_lo;
 					 _delay_ms(1000);
 					 mirf_CSN_hi;*/
-					debug_byte = 1;
 					eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_3,
-							debug_byte);
+							++flow_byte);
 				}
-
-				//debug_byte = 6;
-				//eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
 
 				mirf_powerdown();	// put device in power down mode
 
-				debug_byte = 7;
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
+				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 			}
 			counter = counter + 1;
 			system_sleep();

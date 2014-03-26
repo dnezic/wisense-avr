@@ -40,7 +40,8 @@
 #define RXMODE 1
 #define TXMODE 0
 
-#define mirf_CONFIG		( (1<<EN_CRC) | (1<<CRCO) )
+/* mask interrupts, enable crc16 */
+#define mirf_CONFIG		( (1<<EN_CRC) | (1<<CRCO) | (1 << MASK_TX_DS) | (1 << MASK_RX_DR) | (1 << MASK_MAX_RT) )
 
 // Pin definitions for chip select and chip enabled of the MiRF module
 #ifdef __AVR_ATtiny85__
