@@ -83,9 +83,13 @@ void mirf_config(uint8_t * txaddr, uint8_t * rxaddr, uint8_t mirf_CH, uint8_t mi
 	// enable dyn ack
 	mirf_config_register(FEATURE, 1 << EN_DYN_ACK);
 
-	// Disable auto ack
+	// disable auto ack
 	mirf_config_register(EN_AA, 0);
-	 
+
+	// disable auto retransmission
+	mirf_config_register(SETUP_RETR, 0);
+
+
 	// Set length of incoming payload 
 	// mirf_config_register(RX_PW_P0, mirf_PAYLOAD);
 
@@ -95,8 +99,8 @@ void mirf_config(uint8_t * txaddr, uint8_t * rxaddr, uint8_t mirf_CH, uint8_t mi
 	//mirf_config_register(RF_SETUP, (1 << RF_DR_LOW) | (0 << RF_DR_HIGH) | (1 << RF_PWR_LOW));
 	
 	// Set RADDR and TADDR
-	mirf_write_register(RX_ADDR_P0, txaddr, 5);
-	mirf_write_register(TX_ADDR, rxaddr, 5);
+	mirf_write_register(TX_ADDR, txaddr, 5);
+	mirf_write_register(RX_ADDR_P0, rxaddr, 5);
 	
 	// Enable RX_ADDR_P0 address matching since we also enable auto acknowledgement
 	// mirf_config_register(EN_RXADDR, 1<<ERX_P0);
