@@ -164,17 +164,36 @@ int main(void) {
 			f_wdt = 0;			// reset flag
 			if (wait_counter >= wait_cycles) {
 
-				//powerOnDHT22();
+
 				//_delay_ms(1000);
+
+
+
+				DHT22_DATA_t data;
+				DHT22_ERROR_t error;
+
+
+				debug_byte = 0;
+				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
+
+				cli();
+				powerOnDHT22();
+				error = readDHT22(&data);
+				powerOffDHT22();
+				sei();
 
 				/* reinit */
 				spi_init();
 				mirf_init();
 				_delay_ms(50);
+
+				debug_byte = 1;
+				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
+
+
 				mirf_config(TADDR, RADDR, mirf_CH, BUFFERSIZE);
 
-				//debug_byte = 1;
-				//eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
+
 
 				wait_counter = 0;
 
@@ -189,15 +208,7 @@ int main(void) {
 				debug_byte = 3;
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
 
-				DHT22_DATA_t data;
-				DHT22_ERROR_t error;
 
-				//cli();
-
-				//DHT22_ERROR_t error = readDHT22(&data);
-
-				//sei();
-				//powerOffDHT22();
 
 				//debug_byte = 4;
 				//eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, debug_byte);
