@@ -162,7 +162,7 @@ void powerOnDHT22() {
 	DHT22_PORT_OUT |= (1 << (DHT22_POWER));
 	DHT22_PORT_OUT |= (1 << (DHT22_POWER_2));
 	uint8_t i = 0;
-	for(i = 0; i < 2; i++) {
+	for(i = 0; i < 3; i++) {
 		_delay_ms(1000);
 	}
 
