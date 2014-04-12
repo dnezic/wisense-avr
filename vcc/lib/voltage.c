@@ -22,15 +22,24 @@ long read_vcc() {
 	ADMUX = _BV(MUX5) | _BV(MUX0);
 	#endif
 
+    #ifdef __AVR_ATtiny861A__
+	ADMUX = _BV(MUX4) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
+    #endif
 	
+
 	_delay_ms(10); // Wait for Vref to settle
 	/* enable ADC !*/
 	ADCSRA |= _BV(ADEN);
 
+
 	ADCSRA |= _BV(ADSC); // Start conversion
+
 	while (bit_is_set(ADCSRA,ADSC)); // measuring
 	result = ADCL;
 	result |= ADCH<<8;
 	result = 1126400L / result;
+
+
+	ADCSRA &= ~_BV(ADEN);
 	return result;
 }
