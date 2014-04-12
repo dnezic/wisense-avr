@@ -54,6 +54,11 @@
 #define CSN PB1
 #endif // __AVR_ATtiny84__
 
+#ifdef __AVR_ATtiny861A__
+#define CE PB4
+#define CSN PB5
+#endif
+
 // Definitions for selecting and enabling MiRF module
 #define mirf_CSN_hi	PORTB |=  (1<<CSN);
 #define mirf_CSN_lo	PORTB &= ~(1<<CSN);

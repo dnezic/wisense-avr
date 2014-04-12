@@ -48,5 +48,11 @@ void spi_init(void) {
 	PORTA |= (1<<PINA6);// SPI DI
 #endif
 
+#ifdef __AVR_ATtiny861A__
+	DDRA |= (1<<PINB2); // SPI CLK
+	DDRA |= (1<<PINB1);// SPI DO
+	DDRA &= ~(1<<PINB0);// SPI DI
+	PORTA |= (1<<PINB0);// SPI DI
+#endif
 }
 

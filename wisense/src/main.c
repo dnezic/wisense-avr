@@ -27,9 +27,7 @@
 #include <nRF24L01.h>
 #include <mirf.h>
 #include <voltage.h>
-#include <temp.h>
 
-#define DEBUG 1
 
 #define mirf_CH			0x50
 #define EEPROM_ADDRESS_1 50
@@ -44,6 +42,9 @@
 #ifdef __AVR_ATtiny85__
 #endif
 
+#ifdef __AVR_ATtiny861A__
+#endif
+
 // ATtiny25/45/85 Pin map
 //                                 +-\/-+
 //          Reset/Ain0 (D 5) PB5  1|o   |8  Vcc
@@ -54,12 +55,12 @@
 // ATtiny84 Pin map
 //                                 +-\/-+
 //                           Vcc  1|o   |8  GND
-//                           PB0  2|    |9  PA0
-//                           PB1  3|    |10 PA1
+//            CE             PB0  2|    |9  PA0
+//            CSN            PB1  3|    |10 PA1
 //                           PB3  4|    |11 PA2
 //                           PB2  5|    |12 PA3
-//                           PA7  6|    |13 PA4
-//                           PA6  7|    |14 PA5
+//                           PA7  6|    |13 PA4 nRF24L01 SCK
+//           nRF24L01 MI     PA6  7|    |14 PA5 nRF24L01 MO
 //                                 +----+
 
 /* flags controlling the sleep process */
@@ -96,6 +97,9 @@ void system_sleep() {
 	DDRB = 0xff;
 	PORTA = 0x00;
 	PORTB = 0x00;
+	// pin input high
+	//DDRA &= ~(1 << (PINA2));
+	//PINA |= (1 << (PINA2));
 
 	set_sleep_mode(SLEEP_MODE_PWR_DOWN); // sleep mode is set here (most conservative)
 	sleep_bod_disable()
@@ -172,8 +176,7 @@ int main(void) {
 
 
 
-				DHT22_DATA_t data;
-				DHT22_ERROR_t error = 0;
+
 
 #ifdef DEBUG
 				flow_byte = 0;
@@ -181,11 +184,7 @@ int main(void) {
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 #endif
 
-				/* cli();
-				powerOnDHT22();
-				error = readDHT22(&data);
-				powerOffDHT22();
-				sei(); */
+
 
 #ifdef DEBUG
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
@@ -210,9 +209,9 @@ int main(void) {
 #endif
 
 				uint8_t buffer[11] = { voltage >> 8, voltage & 0xff,
-						data.humidity_integral, data.humidity_decimal,
-						data.temperature_integral, data.temperature_decimal,
-						error, counter, reset_counter, flow_byte, flow_byte_aux };
+						0, 0,
+						0, 0,
+						0, counter, reset_counter, 0, 0 };
 
 				mirf_flush_rx_tx();					// flush TX/RX
 				mirf_send(buffer, BUFFERSIZE);
