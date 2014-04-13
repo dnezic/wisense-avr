@@ -49,10 +49,11 @@ void spi_init(void) {
 #endif
 
 #ifdef __AVR_ATtiny861A__
-	DDRA |= (1<<PINB2); // SPI CLK
-	DDRA |= (1<<PINB1);// SPI DO
-	DDRA &= ~(1<<PINB0);// SPI DI
-	PORTA |= (1<<PINB0);// SPI DI
+	USIPP = 0;
+	DDRB |= (1<<PINB2); // SPI CLK
+	DDRB |= (1<<PINB1);// SPI DO
+	DDRB &= ~(1<<PINB0);// SPI DI
+	PORTB |= (1<<PINB0);// SPI DI
 #endif
 }
 

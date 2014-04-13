@@ -27,13 +27,15 @@
 #include <nRF24L01.h>
 #include <mirf.h>
 #include <voltage.h>
-
+#include <bmp085.h>
 
 #define mirf_CH			0x50
 #define EEPROM_ADDRESS_1 50
 #define EEPROM_ADDRESS_2 51
 #define EEPROM_ADDRESS_3 52
 #define EEPROM_RESET_COUNTER 53
+
+//#define DEBUG 0
 
 #ifdef __AVR_ATtiny84__
 #define WDTCR WDTCSR
@@ -101,7 +103,7 @@ void system_sleep() {
 	//DDRA &= ~(1 << (PINA2));
 	//PINA |= (1 << (PINA2));
 
-	set_sleep_mode(SLEEP_MODE_PWR_DOWN); // sleep mode is set here (most conservative)
+	set_sleep_mode(SLEEP_MODE_PWR_DOWN);// sleep mode is set here (most conservative)
 	sleep_bod_disable()
 	; // probably not supported
 	sleep_mode()
@@ -112,6 +114,18 @@ void system_sleep() {
 	// EXTREME: all ports to low inputs? TODO:
 
 }
+
+//void blink() {
+//	DDRA |= (1 << PORTA1);
+//	PORTA |= (1 << PORTA1);
+//	_delay_us(1000000);
+//	PORTA &= ~(1 << PORTA1);
+//	_delay_us(1000000);
+//	PORTA |= (1 << PORTA1);
+//	_delay_us(1000000);
+//	PORTA &= ~(1 << PORTA1);
+//
+//}
 
 // setup timer
 void setup_watchdog() {
@@ -174,23 +188,30 @@ int main(void) {
 			f_wdt = 0;			// reset flag
 			if (wait_counter >= wait_cycles) {
 
-
-
-
+				//blink();
 
 #ifdef DEBUG
 				flow_byte = 0;
 				flow_byte_aux = 0;
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
+
 #endif
-
-
 
 #ifdef DEBUG
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 #endif
 
-				/* reinit */
+				DDRA |= (1 << PORTA1);
+				PORTA |= (1 << PORTA1);
+				_delay_ms(300);
+
+				BMP085_DATA_t bmp_data;
+				sei();
+				uint8_t bmp_status = bmp085_readall(&bmp_data);
+
+				PORTA &= ~(1 << PORTA1);
+
+				_delay_ms(50);
+
 				setup_mirf();
 
 				mirf_config(TADDR, RADDR, mirf_CH, BUFFERSIZE);
@@ -208,10 +229,8 @@ int main(void) {
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 #endif
 
-				uint8_t buffer[11] = { voltage >> 8, voltage & 0xff,
-						0, 0,
-						0, 0,
-						0, counter, reset_counter, 0, 0 };
+				uint8_t buffer[11] = { voltage >> 8, voltage & 0xff, bmp_data.temperature_integral, bmp_data.temperature_decimal, bmp_data.pressure_1, bmp_data.pressure_2,
+						bmp_data.pressure_3, bmp_data.pressure_4, counter, reset_counter, bmp_status};
 
 				mirf_flush_rx_tx();					// flush TX/RX
 				mirf_send(buffer, BUFFERSIZE);
@@ -225,14 +244,17 @@ int main(void) {
 
 				// If maximum retries were reached, reset MAX_RT
 				/* FIXME: we are doing broadcast, so we don't use retries */
+
 				if (mirf_max_rt_reached()) {
 					mirf_config_register(STATUS, 1 << MAX_RT);
 					/* led flash:
 					 mirf_CSN_lo;
 					 _delay_ms(1000);
 					 mirf_CSN_hi;*/
+
 #ifdef DEBUG
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_3, ++flow_byte_aux);
+					eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_3,
+							++flow_byte_aux);
 #endif
 				}
 
