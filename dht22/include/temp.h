@@ -16,9 +16,10 @@
 #define DHT22_DATA_BIT_COUNT 40
 
 /* Configure port and pin */
-#define DHT22_PIN PINA1
-#define DHT22_POWER PORTA2
-#define DHT22_POWER_2 PORTA3
+#define DHT22_PIN PINA0
+#define DHT22_POWER PORTA1
+#define DHT22_POWER_2 PORTA2
+#define DHT22_POWER_3 PORTA3
 #define DHT22_DDR DDRA
 #define DHT22_PORT_OUT PORTA
 #define DHT22_PORT_IN PINA

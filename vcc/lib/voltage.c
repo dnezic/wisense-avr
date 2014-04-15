@@ -14,6 +14,9 @@ long read_vcc() {
 	// set the reference to Vcc and the measurement to the internal 1.1V reference
 	long result;
 
+	/* enable ADC !*/
+	ADCSRA |= _BV(ADEN);
+
 	#ifdef __AVR_ATtiny85__
 	ADMUX = _BV(MUX3) | _BV(MUX2);
 	#endif
@@ -28,18 +31,22 @@ long read_vcc() {
 	
 
 	_delay_ms(10); // Wait for Vref to settle
-	/* enable ADC !*/
-	ADCSRA |= _BV(ADEN);
 
+	double average = 0;
 
-	ADCSRA |= _BV(ADSC); // Start conversion
+	for(uint8_t i = 0; i < 20; i ++) {
+		ADCSRA |= _BV(ADSC); // Start conversion
+		while (bit_is_set(ADCSRA,ADSC)); // measuring
+		result = ADCL;
+		result |= ADCH<<8;
+		result = 1126400L / result;
+		if(i >= 5) {
+			average = average + result;
+		}
+	}
 
-	while (bit_is_set(ADCSRA,ADSC)); // measuring
-	result = ADCL;
-	result |= ADCH<<8;
-	result = 1126400L / result;
 
 
 	ADCSRA &= ~_BV(ADEN);
-	return result;
+	return average / 15.0;
 }

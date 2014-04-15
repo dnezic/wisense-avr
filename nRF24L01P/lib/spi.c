@@ -1,7 +1,3 @@
-/*
- ATtiny85 SPI
- */
-
 #include "spi.h"
 
 // SPI transfer 1 byte and return the result
@@ -49,6 +45,7 @@ void spi_init(void) {
 #endif
 
 #ifdef __AVR_ATtiny861A__
+	/* USI selection register */
 	USIPP = 0;
 	DDRB |= (1<<PINB2); // SPI CLK
 	DDRB |= (1<<PINB1);// SPI DO

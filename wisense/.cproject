@@ -29,6 +29,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nRF24L01P/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dht22/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/vcc/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/i2c/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bmp_085/include}&quot;"/>
 								</option>
 								<inputType id="de.innot.avreclipse.compiler.winavr.input.592055872" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
 							</tool>
@@ -44,6 +46,7 @@
 									<listOptionValue builtIn="false" value="nRF24L01P"/>
 									<listOptionValue builtIn="false" value="vcc"/>
 									<listOptionValue builtIn="false" value="dht22"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="&quot;${workspace_loc:/avr/bmp_085}&quot;"/>
 								</option>
 								<inputType id="de.innot.avreclipse.tool.linker.input.327399984" name="OBJ Files" superClass="de.innot.avreclipse.tool.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -100,7 +103,7 @@
 								<option id="de.innot.avreclipse.compiler.option.incpath.1856265655" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nRF24L01P/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/vcc/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dht22/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bmp_085/include}&quot;"/>
 								</option>
 								<inputType id="de.innot.avreclipse.compiler.winavr.input.2125669343" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
 							</tool>
@@ -111,13 +114,15 @@
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.release.1425016985" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.release">
 								<option id="de.innot.avreclipse.linker.option.libs.1272865550" name="Libraries (-l)" superClass="de.innot.avreclipse.linker.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="nRF24L01P"/>
+									<listOptionValue builtIn="false" value="bmp_085"/>
+									<listOptionValue builtIn="false" value="i2c"/>
 									<listOptionValue builtIn="false" value="vcc"/>
-									<listOptionValue builtIn="false" value="dht22"/>
 								</option>
 								<option id="de.innot.avreclipse.linker.option.libpath.760125693" name="Libraries Path (-L)" superClass="de.innot.avreclipse.linker.option.libpath" valueType="stringList">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bmp_085/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/i2c/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nRF24L01P/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/vcc/Release}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dht22/Release}&quot;"/>
 								</option>
 								<inputType id="de.innot.avreclipse.tool.linker.input.216185680" name="OBJ Files" superClass="de.innot.avreclipse.tool.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -136,10 +141,10 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
-				<externalSettings containerId="dht22;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
-				<externalSettings containerId="ledtest;de.innot.avreclipse.configuration.app.release.1781068125" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
+				<externalSettings containerId="i2c;de.innot.avreclipse.configuration.lib.release.2111723458" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
 				<externalSettings containerId="nRF24L01P;de.innot.avreclipse.configuration.lib.release.755111345" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
 				<externalSettings containerId="vcc;de.innot.avreclipse.configuration.lib.release.1368394078" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
+				<externalSettings containerId="bmp_085;de.innot.avreclipse.configuration.lib.release.36479451" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
 			</storageModule>
 		</cconfiguration>
 	</storageModule>
