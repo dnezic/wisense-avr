@@ -29,14 +29,9 @@
 #include <avr/io.h>
 #include "twimaster.h"
 #include <util/delay.h>
-#include <avr/eeprom.h>
-
 
 unsigned char USI_TWI_Master_Transfer(unsigned char);
 unsigned char USI_TWI_Master_Stop(void);
-
-//#define EEPROM_READ_ERROR 90
-//#define EEPROM_WRITE_ERROR 91
 
 unsigned int write_errors = 0;
 unsigned int read_errors = 0;
@@ -60,7 +55,7 @@ void USI_TWI_Master_Initialise(void) {
 #if defined( __AVR_ATtiny261A__ ) | \
      defined( __AVR_ATtiny461A__ ) | \
      defined( __AVR_ATtiny861A__ )
-		USIPP = (1 << USIPOS);
+	USIPP = (1 << USIPOS);
 #endif
 
 	PORT_USI |= (1 << PIN_USI_SDA); // Enable pullup on SDA, to set high as released state.
@@ -103,6 +98,8 @@ unsigned char USI_TWI_Master_Start(void) {
 	PORT_USI &= ~(1 << PIN_USI_SCL);                    // Pull SCL LOW.
 	PORT_USI |= (1 << PIN_USI_SDA);                     // Release SDA.
 
+// this error sometimes occurs on first i2c call after device wake up from sleep (don't have idea why),
+// but communication is ok, so I have avoided execution of this code.
 #ifdef SIGNAL_VERIFY
 	if (!(USISR & (1 << USISIF))) {
 		USI_TWI_state.errorState = USI_TWI_MISSING_START_CON;
@@ -148,7 +145,6 @@ unsigned char USI_TWI_Start_Transceiver_With_Data(unsigned char *msg,
 	}
 #endif
 
-
 #ifdef NOISE_TESTING                                // Test if any unexpected conditions have arrived prior to this execution.
 	if( USISR & (1<<USISIF) )
 	{
@@ -167,7 +163,6 @@ unsigned char USI_TWI_Start_Transceiver_With_Data(unsigned char *msg,
 		return (FALSE);
 	}
 
-
 #endif
 
 	if (!(*msg & (1 << TWI_READ_BIT))) // The LSB in the address byte determines if is a masterRead or masterWrite operation.
@@ -181,7 +176,6 @@ unsigned char USI_TWI_Start_Transceiver_With_Data(unsigned char *msg,
 	}
 
 	/*Write address and Read/Write data */
-
 
 	do {
 		/* If masterWrite cycle (or inital address tranmission)*/
@@ -221,11 +215,9 @@ unsigned char USI_TWI_Start_Transceiver_With_Data(unsigned char *msg,
 
 	USI_TWI_Master_Stop();              // Send a STOP condition on the TWI bus.
 
-	if(USI_TWI_state.masterWriteDataMode == TRUE) {
+	if (USI_TWI_state.masterWriteDataMode == TRUE) {
 		write_ok = write_ok + 1;
-	}
-	else
-	{
+	} else {
 		read_ok = read_ok + 1;
 	}
 
@@ -253,7 +245,6 @@ unsigned char USI_TWI_Master_Transfer(unsigned char temp) {
 		_delay_us( T4_TWI);
 		USICR = temp;                          // Generate negative SCL edge.
 	} while (!(USISR & (1 << USIOIF)));        // Check for transfer complete.
-
 
 	_delay_us( T2_TWI);
 	temp = USIDR;                           // Read out data.
@@ -286,156 +277,64 @@ unsigned char USI_TWI_Master_Stop(void) {
 	return (TRUE);
 }
 
-//unsigned char send_general_call(unsigned char* messageBuf) {
-//	messageBuf[0] = TWI_GEN_CALL; // The first byte must always consit of General Call code or the TWI slave address.
-//	messageBuf[1] = 0xAA; // The command or data to be included in the general call.
-//	return USI_TWI_Start_Transceiver_With_Data(messageBuf, 2);
-//}
+void *memset(void *s, int c, uint8_t n) {
+	unsigned char* p = s;
+	while (n--)
+		*p++ = (unsigned char) c;
+	return s;
+}
 
-unsigned char send_data(unsigned char SLAVE_ADDR, unsigned char data) {
+unsigned char send_data_reg(unsigned char SLAVE_ADDR, unsigned char reg,
+		unsigned char value) {
 	unsigned char messageBuf[MESSAGEBUF_SIZE];
 	messageBuf[0] = (SLAVE_ADDR << TWI_ADR_BITS) | (FALSE << TWI_READ_BIT); // The first byte must always consit of General Call code or the TWI slave address.
-	messageBuf[1] = data; // The first byte is used for commands.
-	//messageBuf[2] = data; // The second byte is used for the data.
+	messageBuf[1] = reg; // The first byte is used for commands.
+	messageBuf[2] = value; // The second byte is used for the data.
 
 	unsigned char temp;
 
-	temp = USI_TWI_Start_Transceiver_With_Data(messageBuf, 2);
+	temp = USI_TWI_Start_Transceiver_With_Data(messageBuf, 3);
 
 	if (temp == FALSE) {
-//			uint8_t error_counter = 0;
-//			error_counter = eeprom_read_byte((uint8_t *) EEPROM_WRITE_ERROR);
-//			error_counter = error_counter + 1;
-			//eeprom_update_byte((uint8_t *) EEPROM_WRITE_ERROR, USI_TWI_state.errorState);
-		}
+		write_errors = write_errors + 1;
+	}
 
 	return temp;
 }
 
-unsigned char send_data_pair(unsigned char SLAVE_ADDR, unsigned char reg, unsigned char value) {
+unsigned char receive_data_reg(unsigned char SLAVE_ADDR, uint8_t reg,
+		uint8_t bytes, uint8_t buff[]) {
 	unsigned char messageBuf[MESSAGEBUF_SIZE];
-		messageBuf[0] = (SLAVE_ADDR << TWI_ADR_BITS) | (FALSE << TWI_READ_BIT); // The first byte must always consit of General Call code or the TWI slave address.
-		messageBuf[1] = reg; // The first byte is used for commands.
-		messageBuf[2] = value; // The second byte is used for the data.
-
-		unsigned char temp;
-
-		temp = USI_TWI_Start_Transceiver_With_Data(messageBuf, 3);
-
-		if (temp == FALSE) {
-	//			uint8_t error_counter = 0;
-	//			error_counter = eeprom_read_byte((uint8_t *) EEPROM_WRITE_ERROR);
-	//			error_counter = error_counter + 1;
-				//eeprom_update_byte((uint8_t *) EEPROM_WRITE_ERROR, USI_TWI_state.errorState);
-				write_errors = write_errors + 1;
-			}
-
-		return temp;
-}
-
-unsigned char send_data_no(unsigned char SLAVE_ADDR) {
-	unsigned char messageBuf[MESSAGEBUF_SIZE];
-	messageBuf[0] = (SLAVE_ADDR << TWI_ADR_BITS) | (FALSE << TWI_READ_BIT); // The first byte must always consit of General Call code or the TWI slave address.
-	//messageBuf[1] = data; // The first byte is used for commands.
-	//messageBuf[2] = data; // The second byte is used for the data.
-	return USI_TWI_Start_Transceiver_With_Data(messageBuf, 1);
-}
-
-/*
- unsigned char send_for_receive(unsigned char SLAVE_ADDR) {
- unsigned char messageBuf[MESSAGEBUF_SIZE];
- // Send a Address Call, sending a request, followed by a receive
- // Send the request-for-data command to the Slave
- unsigned char temp;
- messageBuf[0] = (SLAVE_ADDR << TWI_ADR_BITS) | (FALSE << TWI_READ_BIT); // The first byte must always consit of General Call code or the TWI slave address.
- //messageBuf[1] = TWI_CMD_MASTER_READ; // The first byte is used for commands.
- temp = USI_TWI_Start_Transceiver_With_Data(messageBuf, 1);
- return temp;
- }*/
-
-unsigned char receive_byte(unsigned char SLAVE_ADDR) {
-	unsigned char messageBuf[MESSAGEBUF_SIZE];
+	memset(messageBuf, 0, sizeof(messageBuf));
 	unsigned char temp;
-	unsigned char byte;
-	// Transmit request and get the received data from the transceiver buffer
-	messageBuf[0] = (SLAVE_ADDR << TWI_ADR_BITS) | (TRUE << TWI_READ_BIT); // The first byte must always consit of General Call code or the TWI slave address.
-	messageBuf[1] = 0; // The first byte is used for commands.
 
-	do
-		temp = USI_TWI_Start_Transceiver_With_Data(messageBuf, 2);
-	while (USI_TWI_Get_State_Info() == USI_TWI_NO_ACK_ON_ADDRESS);
-
-	if (temp == FALSE) {
-//		uint8_t error_counter = 0;
-//		error_counter = eeprom_read_byte((uint8_t *) EEPROM_READ_ERROR);
-//		error_counter = error_counter + 1;
-		//eeprom_update_byte((uint8_t *) EEPROM_READ_ERROR, USI_TWI_state.errorState);
-	}
-
-	byte = messageBuf[1];        // Store data on PORTB.
-	return byte;
-}
-
-
-unsigned char receive_bytes(unsigned char SLAVE_ADDR, uint8_t bytes, uint8_t buff[]) {
-	unsigned char messageBuf[MESSAGEBUF_SIZE];
-	unsigned char temp;
-	unsigned char byte;
-	// Transmit request and get the received data from the transceiver buffer
-	messageBuf[0] = (SLAVE_ADDR << TWI_ADR_BITS) | (TRUE << TWI_READ_BIT); // The first byte must always consit of General Call code or the TWI slave address.
-
-	do
-		temp = USI_TWI_Start_Transceiver_With_Data(messageBuf, bytes+1);
-	while (USI_TWI_Get_State_Info() == USI_TWI_NO_ACK_ON_ADDRESS);
-
-	if (temp == FALSE) {
-//		uint8_t error_counter = 0;
-//		error_counter = eeprom_read_byte((uint8_t *) EEPROM_READ_ERROR);
-//		error_counter = error_counter + 1;
-		read_errors = read_errors  + 1;
-		//eeprom_update_byte((uint8_t *) EEPROM_READ_ERROR, USI_TWI_state.errorState);
-	}
-
-	for(uint8_t i = 0; i < bytes; i++) {
-		buff[i] = messageBuf[i + 1];
-	}
-
-
-	return temp;
-}
-
-
-unsigned char receive_bytes_pair(unsigned char SLAVE_ADDR, uint8_t reg, uint8_t bytes, uint8_t buff[]) {
-	unsigned char messageBuf[MESSAGEBUF_SIZE];
-	unsigned char temp;
-	unsigned char byte;
-
-	messageBuf[0] = (SLAVE_ADDR << TWI_ADR_BITS) | (FALSE << TWI_READ_BIT); // The first byte must always consit of General Call code or the TWI slave address.
+	messageBuf[0] = (SLAVE_ADDR << TWI_ADR_BITS) | (FALSE << TWI_READ_BIT); // The first byte must always consist of General Call code or the TWI slave address.
 	messageBuf[1] = reg; // The first byte is used for commands.
 
 	temp = USI_TWI_Start_Transceiver_With_Data(messageBuf, 2);
+	if (temp == FALSE) {
+		write_errors = write_errors + 1;
+		return FALSE;
+	}
 
-	//_delay_ms(15);
+	// wait for i2c slave to process data
+	_delay_us(T4_TWI);
 
+	memset(messageBuf, 0, sizeof(messageBuf));
 	// Transmit request and get the received data from the transceiver buffer
-	messageBuf[0] = (SLAVE_ADDR << TWI_ADR_BITS) | (TRUE << TWI_READ_BIT); // The first byte must always consit of General Call code or the TWI slave address.
+	messageBuf[0] = (SLAVE_ADDR << TWI_ADR_BITS) | (TRUE << TWI_READ_BIT); // The first byte must always consist of General Call code or the TWI slave address.
 
 	do
-		temp = USI_TWI_Start_Transceiver_With_Data(messageBuf, bytes+1);
+		temp = USI_TWI_Start_Transceiver_With_Data(messageBuf, bytes + 1);
 	while (USI_TWI_Get_State_Info() == USI_TWI_NO_ACK_ON_ADDRESS);
 
 	if (temp == FALSE) {
-//		uint8_t error_counter = 0;
-//		error_counter = eeprom_read_byte((uint8_t *) EEPROM_READ_ERROR);
-//		error_counter = error_counter + 1;
-		read_errors = read_errors  + 1;
-		//eeprom_update_byte((uint8_t *) EEPROM_READ_ERROR, USI_TWI_state.errorState);
+		read_errors = read_errors + 1;
 	}
 
-	for(uint8_t i = 0; i < bytes; i++) {
+	for (uint8_t i = 0; i < bytes; i++) {
 		buff[i] = messageBuf[i + 1];
 	}
-
 
 	return temp;
 }
@@ -446,7 +345,6 @@ unsigned char USI_TWI_Get_Write_Errors(void) {
 unsigned char USI_TWI_Get_Read_Errors(void) {
 	return read_errors;
 }
-
 unsigned char USI_TWI_Get_Write_Oks(void) {
 	return write_ok;
 }

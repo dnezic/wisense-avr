@@ -19,6 +19,6 @@ environment/project/de.innot.avreclipse.configuration.app.debug.1499210002/appen
 environment/project/de.innot.avreclipse.configuration.app.debug.1499210002/appendContributed=true
 environment/project/de.innot.avreclipse.configuration.app.release.1198306195/AVRTARGETFCPU/delimiter=\:
 environment/project/de.innot.avreclipse.configuration.app.release.1198306195/AVRTARGETFCPU/operation=replace
-environment/project/de.innot.avreclipse.configuration.app.release.1198306195/AVRTARGETFCPU/value=8000000
+environment/project/de.innot.avreclipse.configuration.app.release.1198306195/AVRTARGETFCPU/value=1000000
 environment/project/de.innot.avreclipse.configuration.app.release.1198306195/append=true
 environment/project/de.innot.avreclipse.configuration.app.release.1198306195/appendContributed=true

@@ -1,6 +1,6 @@
 /*
 
- nRF24L01+ with the ATtiny85 or ATtiny84
+ nRF24L01+ tested with ATtiny85, ATtiny84A and ATtiny861A
 
  Based on:
  http://www.insidegadgets.com/2012/08/22/using-the-nrf24l01-wireless-module/
@@ -15,27 +15,27 @@
 
 /*
  * already set as environment variable
+ *
+ * #define F_CPU 1000000UL
  * #define F_CPU 8000000UL
+ *
  */
-#include <avr/io.h>
-#include <util/delay.h>
-#include <avr/sleep.h>
+
 #include <avr/interrupt.h>
+#include <avr/sfr_defs.h>
 #include <avr/sleep.h>
-#include <avr/wdt.h>
 #include <avr/eeprom.h>
-#include <nRF24L01.h>
-#include <mirf.h>
-#include <voltage.h>
 #include <bmp085.h>
+#include <mirf.h>
+#include <nRF24L01.h>
+#include <spi.h>
+#include <util/delay.h>
+#include <util.h>
+#include <voltage.h>
 
 #define mirf_CH			0x50
-#define EEPROM_ADDRESS_1 50
-#define EEPROM_ADDRESS_2 51
-#define EEPROM_ADDRESS_3 52
-#define EEPROM_RESET_COUNTER 53
 
-//#define DEBUG 0
+#define DEBUG 0
 
 #ifdef __AVR_ATtiny84__
 #define WDTCR WDTCSR
@@ -45,6 +45,10 @@
 #endif
 
 #ifdef __AVR_ATtiny861A__
+#endif
+
+#ifdef DEBUG
+#define EEPROM_RESET_COUNTER 50
 #endif
 
 // ATtiny25/45/85 Pin map
@@ -57,17 +61,32 @@
 // ATtiny84 Pin map
 //                                 +-\/-+
 //                           Vcc  1|o   |8  GND
-//            CE             PB0  2|    |9  PA0
-//            CSN            PB1  3|    |10 PA1
+//           nRF24L01 CE     PB0  2|    |9  PA0
+//           nRF24L01 CSN    PB1  3|    |10 PA1
 //                           PB3  4|    |11 PA2
 //                           PB2  5|    |12 PA3
 //                           PA7  6|    |13 PA4 nRF24L01 SCK
 //           nRF24L01 MI     PA6  7|    |14 PA5 nRF24L01 MO
 //                                 +----+
+//
+// ATtiny861 Pin map
+//                                 +-\/-+
+//           nRF24L01 MI     PB0  1|o   |20  PA0
+//           nRF24L01 MO     PB1  2|    |19  PA1
+//           nRF24L01 SCK    PB2  3|    |18  PA3
+//                           PB3  4|    |17  PA3
+//                           VCC  5|    |16  AGND
+//                           GND  6|    |15  AVCC
+//           nRF24L01 CE     PB4  7|    |14  PA4
+//           nRF24L01 CSN    PB5  8|    |13  PA5
+//                           PB6  9|    |12  PA6
+//                           PB7 10|    |11  PA7
+//                                 +----+
 
 /* flags controlling the sleep process */
 volatile boolean f_wdt = 1;
 volatile uint8_t wait_counter = 29;
+/* wait for approximately 5 minutes. */
 volatile uint8_t wait_cycles = 32;
 
 // watchdog interrupt
@@ -90,7 +109,6 @@ ISR(WDT_vect) {
 void system_sleep() {
 
 	cbi(ADCSRA, ADEN);  // switch ADC OFF
-	// all inputs low
 
 	/* all pins low */
 	PORTA = 0x00;
@@ -99,33 +117,15 @@ void system_sleep() {
 	DDRB = 0xff;
 	PORTA = 0x00;
 	PORTB = 0x00;
-	// pin input high
-	//DDRA &= ~(1 << (PINA2));
-	//PINA |= (1 << (PINA2));
 
-	set_sleep_mode(SLEEP_MODE_PWR_DOWN);// sleep mode is set here (most conservative)
+	set_sleep_mode(SLEEP_MODE_PWR_DOWN); // sleep mode is set here (most conservative)
 	sleep_bod_disable()
 	; // probably not supported
 	sleep_mode()
 	;  // system sleeps here
 	   // (includes sleep disable and enable)
-	sbi(ADCSRA, ADEN);						// switch ADC ON
-
-	// EXTREME: all ports to low inputs? TODO:
 
 }
-
-//void blink() {
-//	DDRA |= (1 << PORTA1);
-//	PORTA |= (1 << PORTA1);
-//	_delay_us(1000000);
-//	PORTA &= ~(1 << PORTA1);
-//	_delay_us(1000000);
-//	PORTA |= (1 << PORTA1);
-//	_delay_us(1000000);
-//	PORTA &= ~(1 << PORTA1);
-//
-//}
 
 // setup timer
 void setup_watchdog() {
@@ -141,7 +141,7 @@ void setup_watchdog() {
 	 */
 
 	MCUSR &= ~(1 << WDRF);// clear the watchdog reset, this is required to disable already active timer
-						  // if reset of device happened. TODO: the purpose is not clear
+						  // if reset of device happened. TODO: the exact purpose is not clear to me
 
 	WDTCR |= (1 << WDCE) | (1 << WDE);// set up watchdog timer, in same operation
 	WDTCR |= (1 << WDP3) | (1 << WDP0);	// timer goes off every 8 seconds
@@ -153,6 +153,7 @@ void setup_watchdog() {
 
 }
 
+/* initialize SPI on PORTB */
 void setup_mirf() {
 	spi_init();
 	mirf_init();
@@ -163,9 +164,11 @@ int main(void) {
 
 	uint8_t counter = 0;
 
+#if DEBUG
 	uint8_t flow_byte;
 	uint8_t flow_byte_aux = 0;
 	uint8_t reset_counter = 0;
+#endif
 
 	const uint8_t BUFFERSIZE = 11;
 	long voltage = 0;
@@ -174,7 +177,7 @@ int main(void) {
 
 	setup_watchdog();
 
-#ifdef DEBUG
+#if DEBUG
 	/* store reset/power counter into eeprom */
 	reset_counter = eeprom_read_byte((uint8_t *) EEPROM_RESET_COUNTER);
 	reset_counter = reset_counter + 1;
@@ -188,29 +191,33 @@ int main(void) {
 			f_wdt = 0;			// reset flag
 			if (wait_counter >= wait_cycles) {
 
-				//blink();
+#if DEBUG
+				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
+#endif
 
-#ifdef DEBUG
+#if DEBUG
 				flow_byte = 0;
 				flow_byte_aux = 0;
 
 #endif
 
-#ifdef DEBUG
+				/* important to be called first to get accurate readings */
+				voltage = read_vcc();
+
+#if DEBUG
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 #endif
 
-				DDRA |= (1 << PORTA1);
-				PORTA |= (1 << PORTA1);
+				/* power on BMP085 */
+				DDRB |= (1 << PORTB6);
+				PORTB |= (1 << PORTB6);
 				_delay_ms(300);
 
 				BMP085_DATA_t bmp_data;
-				sei();
-				uint8_t bmp_status = bmp085_readall(&bmp_data);
+				BMP085_ERROR_t error = bmp085_readall(&bmp_data);
 
-				PORTA &= ~(1 << PORTA1);
-
-				_delay_ms(50);
+				/* power off BMP085 */
+				PORTB &= ~(1 << PORTB6);
 
 				setup_mirf();
 
@@ -219,18 +226,15 @@ int main(void) {
 
 				wait_counter = 0;
 
-#ifdef DEBUG
+#if DEBUG
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 #endif
 
-				voltage = read_vcc();
-
-#ifdef DEBUG
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
-#endif
-
-				uint8_t buffer[11] = { voltage >> 8, voltage & 0xff, bmp_data.temperature_integral, bmp_data.temperature_decimal, bmp_data.pressure_1, bmp_data.pressure_2,
-						bmp_data.pressure_3, bmp_data.pressure_4, counter, reset_counter, bmp_status};
+				uint8_t buffer[11] = { voltage >> 8, voltage & 0xff,
+						bmp_data.temperature_integral,
+						bmp_data.temperature_decimal, bmp_data.pressure_1,
+						bmp_data.pressure_2, bmp_data.pressure_3,
+						bmp_data.pressure_4, counter, 0, error.total_errors };
 
 				mirf_flush_rx_tx();					// flush TX/RX
 				mirf_send(buffer, BUFFERSIZE);
@@ -238,21 +242,15 @@ int main(void) {
 				// unnecessary delay ?
 				_delay_ms(100);
 
-#ifdef DEBUG
+#if DEBUG
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 #endif
 
 				// If maximum retries were reached, reset MAX_RT
-				/* FIXME: we are doing broadcast, so we don't use retries */
-
+				/* FIXME: we are doing broadcast with no ACK, so why sometimes program enters in this block? */
 				if (mirf_max_rt_reached()) {
 					mirf_config_register(STATUS, 1 << MAX_RT);
-					/* led flash:
-					 mirf_CSN_lo;
-					 _delay_ms(1000);
-					 mirf_CSN_hi;*/
-
-#ifdef DEBUG
+#if DEBUG
 					eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_3,
 							++flow_byte_aux);
 #endif
@@ -260,7 +258,7 @@ int main(void) {
 
 				mirf_powerdown();	// put device in power down mode
 
-#ifdef DEBUG
+#if DEBUG
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 #endif
 			}

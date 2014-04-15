@@ -159,10 +159,13 @@ DHT22_ERROR_t readDHT22(DHT22_DATA_t* data) {
 void powerOnDHT22() {
 	DHT22_DDR |= 1 << (DHT22_POWER);
 	DHT22_DDR |= 1 << (DHT22_POWER_2);
+	DHT22_DDR |= 1 << (DHT22_POWER_3);
+	_delay_ms(50);
 	DHT22_PORT_OUT |= (1 << (DHT22_POWER));
 	DHT22_PORT_OUT |= (1 << (DHT22_POWER_2));
+	DHT22_PORT_OUT |= (1 << (DHT22_POWER_3));
 	uint8_t i = 0;
-	for(i = 0; i < 3; i++) {
+	for(i = 0; i < 5; i++) {
 		_delay_ms(1000);
 	}
 
@@ -171,7 +174,11 @@ void powerOnDHT22() {
 void powerOffDHT22() {
 	DHT22_DDR |= 1 << (DHT22_POWER);
 	DHT22_DDR |= 1 << (DHT22_POWER_2);
+	DHT22_DDR |= 1 << (DHT22_POWER_3);
+	_delay_ms(50);
 	DHT22_PORT_OUT &= ~(1 << (DHT22_POWER));
 	DHT22_PORT_OUT &= ~(1 << (DHT22_POWER_2));
+	DHT22_PORT_OUT &= ~(1 << (DHT22_POWER_3));
 }
+
 

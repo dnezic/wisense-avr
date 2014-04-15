@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>avr</name>
+	<name>i2c</name>
 	<comment></comment>
 	<projects>
-		<project>bmp_085</project>
-		<project>dht22</project>
-		<project>i2c</project>
-		<project>ledtest</project>
-		<project>nRF24L01P</project>
-		<project>vcc</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

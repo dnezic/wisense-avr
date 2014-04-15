@@ -23,7 +23,7 @@
 							</tool>
 							<tool id="de.innot.avreclipse.tool.compiler.winavr.lib.debug.2061949502" name="AVR Compiler" superClass="de.innot.avreclipse.tool.compiler.winavr.lib.debug">
 								<option id="de.innot.avreclipse.compiler.option.debug.level.96417543" name="Generate Debugging Info" superClass="de.innot.avreclipse.compiler.option.debug.level"/>
-								<option id="de.innot.avreclipse.compiler.option.optimize.2095059951" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize"/>
+								<option id="de.innot.avreclipse.compiler.option.optimize.2095059951" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize" value="de.innot.avreclipse.compiler.optimize.size" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.compiler.option.incpath.1558432323" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/include}&quot;"/>
 								</option>

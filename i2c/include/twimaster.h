@@ -28,15 +28,13 @@
  ****************************************************************************/
 #include <avr/io.h>
 #include <util/twi.h>
-//********** Defines **********//
-// Defines controlling timing limits
-//#define SYS_CLK   8000.0  // [kHz]
-// TWI STANDARD mode timing limits. SCL <= 100kHz
-#define T2_TWI    5
-#define T4_TWI    4
 
-//#define T2_TWI    5 // >4,7us
-//#define T4_TWI    4 // >4,0us
+//********** Defines **********//
+
+// TWI STANDARD mode timing limits. SCL <= 100kHz, F_CPU = 1000000
+#define T2_TWI    5 // >4,7us
+#define T4_TWI    4 // >4,0us
+
 
 /****************************************************************************
  Bit and byte definitions
@@ -55,7 +53,7 @@
 #define USI_TWI_MISSING_START_CON   0x07  // Generated Start Condition not detected on bus
 #define USI_TWI_MISSING_STOP_CON    0x08  // Generated Stop Condition not detected on bus
 
-#define SIGNAL_VERIFY 1
+//#define SIGNAL_VERIFY 1
 //#define PARAM_VERIFICATION 1
 //#define NOISE_TESTING 1
 
@@ -99,18 +97,15 @@ extern void USI_TWI_Master_Initialise(void);
 extern unsigned char USI_TWI_Start_Transceiver_With_Data(unsigned char *,
 		unsigned char);
 extern unsigned char USI_TWI_Get_State_Info(void);
-//extern unsigned char receive_byte(unsigned char SLAVE_ADDR);
-//extern unsigned char receive_bytes(unsigned char SLAVE_ADDR, uint8_t bytes, uint8_t buff[]);
-//extern unsigned char send_for_receive(unsigned char SLAVE_ADDR);
-//extern unsigned char send_data(unsigned char SLAVE_ADDR, unsigned char data);
-extern unsigned char send_data_pair(unsigned char SLAVE_ADDR, unsigned char reg, unsigned char value);
-extern unsigned char receive_bytes_pair(unsigned char SLAVE_ADDR, unsigned char reg, uint8_t bytes, uint8_t buff[]);
-//extern unsigned char send_data_no(unsigned char SLAVE_ADDR);
-//extern unsigned char send_general_call(unsigned char* messageBuf);
+extern unsigned char send_data_reg(unsigned char SLAVE_ADDR, unsigned char reg, unsigned char value);
+extern unsigned char receive_data_reg(unsigned char SLAVE_ADDR, unsigned char reg, uint8_t bytes, uint8_t buff[]);
+
 
 extern unsigned char USI_TWI_Get_Write_Errors(void);
 extern unsigned char USI_TWI_Get_Read_Errors(void);
 extern unsigned char USI_TWI_Get_Write_Oks(void);
 extern unsigned char USI_TWI_Get_Read_Oks(void);
 extern void USI_TWI_ResetStats(void);
+extern void *memset(void *s, int c, uint8_t n);
+
 
