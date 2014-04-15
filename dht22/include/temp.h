@@ -17,9 +17,6 @@
 
 /* Configure port and pin */
 #define DHT22_PIN PINA0
-#define DHT22_POWER PORTA1
-#define DHT22_POWER_2 PORTA2
-#define DHT22_POWER_3 PORTA3
 #define DHT22_DDR DDRA
 #define DHT22_PORT_OUT PORTA
 #define DHT22_PORT_IN PINA
@@ -53,8 +50,5 @@ typedef struct
 #endif
 
 extern DHT22_ERROR_t readDHT22(DHT22_DATA_t* data);
-extern void powerOnDHT22();
-extern void powerOffDHT22();
-
 
 #endif /* TEMP_H_ */
