@@ -4,9 +4,10 @@
  * Created: 29.1.2014. 20:49:51
  *  Author: drazen
  */
-#include <temp.h>
+#include <dht22.h>
 
 DHT22_ERROR_t readDHT22(DHT22_DATA_t* data) {
+
 
 	uint8_t retryCount = 0;
 	uint8_t csPart1, csPart2, csPart3, csPart4;
@@ -113,7 +114,6 @@ DHT22_ERROR_t readDHT22(DHT22_DATA_t* data) {
 			}
 		}
 	}
-
 	// translate bitTimes
 	// 26~28us == logical 0
 	// 70us    == logical 1
@@ -151,6 +151,7 @@ DHT22_ERROR_t readDHT22(DHT22_DATA_t* data) {
 		}
 		data->raw_humidity = rawHumidity;
 #endif
+
 		return DHT_ERROR_NONE;
 	}
 	return DHT_ERROR_CHECKSUM;
