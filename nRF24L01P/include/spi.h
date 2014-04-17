@@ -2,6 +2,7 @@
 #define SETUP_H_
 
 #include <avr/io.h>
+#include <util/delay.h>
 #include "util.h"
 
 extern void spi_write_data(uint8_t * dataout, uint8_t len);
