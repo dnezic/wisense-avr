@@ -5,8 +5,8 @@
 */
 
 
-#ifndef TEMP_H_
-#define TEMP_H_
+#ifndef DHT22_H_
+#define DHT22_H_
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -16,10 +16,19 @@
 #define DHT22_DATA_BIT_COUNT 40
 
 /* Configure port and pin */
-#define DHT22_PIN PINA0
-#define DHT22_DDR DDRA
-#define DHT22_PORT_OUT PORTA
-#define DHT22_PORT_IN PINA
+
+/* AVR has to have fuse:
+ * Divide clock by 8 internally; [CKDIV8=0] unset,
+ * #> -U lfuse:w:0xe2:m -U hfuse:w:0xdf:m -U efuse:w:0xff:m
+ * So it runs with F_CPU set to 8000000L
+ */
+#ifdef __AVR_ATtiny861A__
+#define DHT22_PIN PINB6
+#define DHT22_DDR DDRB
+#define DHT22_PORT_OUT PORTB
+#define DHT22_PORT_IN PINB
+#endif
+
 
 typedef enum
 {

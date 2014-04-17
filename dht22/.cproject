@@ -26,7 +26,7 @@
 							</builder>
 							<tool id="de.innot.avreclipse.tool.assembler.winavr.lib.debug.2019134801" name="AVR Assembler" superClass="de.innot.avreclipse.tool.assembler.winavr.lib.debug">
 								<option id="de.innot.avreclipse.assembler.option.debug.level.434777638" name="Generate Debugging Info" superClass="de.innot.avreclipse.assembler.option.debug.level"/>
-								<option id="de.innot.avreclipse.asm.option.include.paths.1167440133" name="#include paths for preprocessor(-I)" superClass="de.innot.avreclipse.asm.option.include.paths" valueType="includePath"/>
+								<option id="de.innot.avreclipse.asm.option.include.paths.1167440133" name="#include paths for preprocessor(-I)" superClass="de.innot.avreclipse.asm.option.include.paths"/>
 								<inputType id="de.innot.avreclipse.tool.assembler.input.1034104855" superClass="de.innot.avreclipse.tool.assembler.input"/>
 							</tool>
 							<tool id="de.innot.avreclipse.tool.compiler.winavr.lib.debug.522352578" name="AVR Compiler" superClass="de.innot.avreclipse.tool.compiler.winavr.lib.debug">
