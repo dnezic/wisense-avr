@@ -21,6 +21,7 @@
  *
  */
 
+#include <util/delay.h>
 #include <avr/interrupt.h>
 #include <avr/sfr_defs.h>
 #include <avr/sleep.h>
@@ -29,9 +30,9 @@
 #include <mirf.h>
 #include <nRF24L01.h>
 #include <spi.h>
-#include <util/delay.h>
 #include <util.h>
 #include <voltage.h>
+#include <dht22.h>
 
 #define mirf_CH			0x50
 
@@ -45,11 +46,18 @@
 #endif
 
 #ifdef __AVR_ATtiny861A__
+/* used to power on Step-Up 3.3V converter using PN2222. */
+#define SWITCH_PIN PORTB3
+#define SWITCH_DDR DDRB
+#define SWITCH_PORT PORTB
 #endif
 
 #ifdef DEBUG
 #define EEPROM_RESET_COUNTER 50
+#define EEPROM_ADDRESS_2 51
+#define EEPROM_ADDRESS_3 52
 #endif
+
 
 // ATtiny25/45/85 Pin map
 //                                 +-\/-+
@@ -85,9 +93,9 @@
 
 /* flags controlling the sleep process */
 volatile boolean f_wdt = 1;
-volatile uint8_t wait_counter = 29;
-/* wait for approximately 5 minutes. */
-volatile uint8_t wait_cycles = 32;
+volatile uint8_t wait_counter = 62;
+/* wait for approximately 10 minutes. */
+volatile uint8_t wait_cycles = 64;
 
 // watchdog interrupt
 ISR(WDT_vect) {
@@ -160,6 +168,8 @@ void setup_mirf() {
 	_delay_ms(50);
 }
 
+#define BUFFERSIZE 15
+
 int main(void) {
 
 	uint8_t counter = 0;
@@ -170,7 +180,7 @@ int main(void) {
 	uint8_t reset_counter = 0;
 #endif
 
-	const uint8_t BUFFERSIZE = 11;
+	//const uint8_t BUFFERSIZE = 16;
 	long voltage = 0;
 	byte RADDR[] = { 0xe3, 0xf0, 0xf0, 0xf0, 0xf0 };
 	byte TADDR[] = { 0xe3, 0xf0, 0xf0, 0xf0, 0xf0 };
@@ -192,10 +202,6 @@ int main(void) {
 			if (wait_counter >= wait_cycles) {
 
 #if DEBUG
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
-#endif
-
-#if DEBUG
 				flow_byte = 0;
 				flow_byte_aux = 0;
 
@@ -208,16 +214,27 @@ int main(void) {
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 #endif
 
-				/* power on BMP085 */
-				DDRB |= (1 << PORTB6);
-				PORTB |= (1 << PORTB6);
-				_delay_ms(300);
+				/* power on BMP085 and DHT22 */
+
+				SWITCH_DDR |= (1 << SWITCH_PIN);
+				SWITCH_PORT |= (1 << SWITCH_PIN);
+
+				/* wait for BMP085 to start. */
+				_delay_ms(1500);
 
 				BMP085_DATA_t bmp_data;
 				BMP085_ERROR_t error = bmp085_readall(&bmp_data);
 
-				/* power off BMP085 */
-				PORTB &= ~(1 << PORTB6);
+				/* wait for DHT22 to start (at least 2000 ms consecutive). */
+				_delay_ms(1500);
+
+				DHT22_DATA_t dht22_data;
+				DHT22_ERROR_t dht22_error;
+
+				dht22_error = readDHT22(&dht22_data);
+
+				/* power off DHT22 and BMP085 */
+				SWITCH_PORT &= ~(1 << SWITCH_PIN);
 
 				setup_mirf();
 
@@ -230,17 +247,21 @@ int main(void) {
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 #endif
 
-				uint8_t buffer[11] = { voltage >> 8, voltage & 0xff,
+				uint8_t buffer[BUFFERSIZE] = { voltage >> 8, voltage & 0xff,
 						bmp_data.temperature_integral,
 						bmp_data.temperature_decimal, bmp_data.pressure_1,
 						bmp_data.pressure_2, bmp_data.pressure_3,
-						bmp_data.pressure_4, counter, 0, error.total_errors };
+						bmp_data.pressure_4, dht22_data.temperature_integral,
+						dht22_data.temperature_decimal,
+						dht22_data.humidity_integral,
+						dht22_data.humidity_decimal, dht22_error, counter,
+						error.total_errors };
 
 				mirf_flush_rx_tx();					// flush TX/RX
 				mirf_send(buffer, BUFFERSIZE);
 
 				// unnecessary delay ?
-				_delay_ms(100);
+				_delay_ms(50);
 
 #if DEBUG
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);

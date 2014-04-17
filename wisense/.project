@@ -6,7 +6,6 @@
 		<project>bmp_085</project>
 		<project>dht22</project>
 		<project>i2c</project>
-		<project>ledtest</project>
 		<project>nRF24L01P</project>
 		<project>vcc</project>
 	</projects>
