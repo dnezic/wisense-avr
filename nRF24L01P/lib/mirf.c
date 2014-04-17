@@ -56,6 +56,7 @@ void mirf_init(void) {
 	DDRB |= ((1<<CSN)|(1<<CE));
 	mirf_CE_lo;
 	mirf_CSN_hi;
+
 }
 
 void mirf_powerdown(void) {
@@ -115,7 +116,6 @@ void mirf_flush_rx_tx(void) {
 	mirf_CSN_lo; // Pull down chip select
 	spi_transfer(FLUSH_RX); // Flush RX
 	mirf_CSN_hi; // Pull up chip select
-
 	mirf_CSN_lo; // Pull down chip select
 	spi_transfer(FLUSH_TX);  // Write cmd to flush tx fifo
 	mirf_CSN_hi; // Pull up chip select
@@ -186,17 +186,14 @@ void mirf_write_register(uint8_t reg, uint8_t *value, uint8_t len) {
 void mirf_send(uint8_t *value, uint8_t len) {
 	PMODE = TXMODE; // Set to transmitter mode
 	TX_POWERUP; // Power up
-
 	mirf_CSN_lo; // Pull down chip select
 	spi_transfer(FLUSH_TX);  // Write cmd to flush tx fifo
 	mirf_CSN_hi; // Pull up chip select
-
 	mirf_CSN_lo;  // Pull down chip select
 	/* explicitly set no ack flag on outgoing packets. */
 	spi_transfer(W_TX_PAYLOAD_NO_ACK); // Write cmd to write payload
 	spi_write_data(value, len); // Write payload
 	mirf_CSN_hi; // Pull up chip select
-
 	mirf_CE_hi; // Start transmission
 	_delay_us(DLY);
 	mirf_CE_lo;

@@ -1,7 +1,15 @@
 #include "spi.h"
 
+/* slow down little bit if F_CPU is set to 8000000L */
+#if F_CPU == 8000000L
+#define MS 8
+#else
+#define MS 1
+#endif
+
 // SPI transfer 1 byte and return the result
 uint8_t spi_transfer(uint8_t data) {
+	_delay_us(MS);
 	USIDR = data;
 	USISR = _BV(USIOIF); // clear flag
 
@@ -13,6 +21,7 @@ uint8_t spi_transfer(uint8_t data) {
 
 // Write data using SPI
 void spi_write_data(uint8_t * dataout, uint8_t len) {
+	_delay_us(MS);
 	uint8_t i;
 	for (i = 0; i < len; i++) {
 		spi_transfer(dataout[i]);
@@ -21,6 +30,7 @@ void spi_write_data(uint8_t * dataout, uint8_t len) {
 
 // Read data using SPI
 void spi_read_data(uint8_t * datain, uint8_t len) {
+	_delay_us(MS);
 	uint8_t i;
 	for (i = 0; i < len; i++) {
 		datain[i] = spi_transfer(0x00);
