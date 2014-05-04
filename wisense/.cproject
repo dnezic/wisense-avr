@@ -102,7 +102,6 @@
 								<option id="de.innot.avreclipse.compiler.option.optimize.363274671" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize" value="de.innot.avreclipse.compiler.optimize.size" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.compiler.option.incpath.1856265655" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nRF24L01P/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dht22/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/vcc/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bmp_085/include}&quot;"/>
 								</option>
@@ -115,14 +114,12 @@
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.release.1425016985" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.release">
 								<option id="de.innot.avreclipse.linker.option.libs.1272865550" name="Libraries (-l)" superClass="de.innot.avreclipse.linker.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="nRF24L01P"/>
-									<listOptionValue builtIn="false" value="dht22"/>
 									<listOptionValue builtIn="false" value="bmp_085"/>
 									<listOptionValue builtIn="false" value="i2c"/>
 									<listOptionValue builtIn="false" value="vcc"/>
 								</option>
 								<option id="de.innot.avreclipse.linker.option.libpath.760125693" name="Libraries Path (-L)" superClass="de.innot.avreclipse.linker.option.libpath" valueType="stringList">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bmp_085/Release}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dht22/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/i2c/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nRF24L01P/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/vcc/Release}&quot;"/>

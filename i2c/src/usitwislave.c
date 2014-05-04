@@ -46,7 +46,7 @@ Change Activity:
 #include <avr/interrupt.h>
 #include <stdbool.h>
 #include <usitwislave.h>
-
+#include <twimaster.h>
 
 
 /********************************************************************************
