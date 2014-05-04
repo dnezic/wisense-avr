@@ -32,7 +32,6 @@
 #include <spi.h>
 #include <util.h>
 #include <voltage.h>
-#include <dht22.h>
 
 #define mirf_CH			0x50
 
@@ -46,7 +45,7 @@
 #endif
 
 #ifdef __AVR_ATtiny861A__
-/* used to power on Step-Up 3.3V converter using PN2222. */
+/* used to power on BMP085 using PN2222. */
 #define SWITCH_PIN PORTB3
 #define SWITCH_DDR DDRB
 #define SWITCH_PORT PORTB
@@ -57,7 +56,6 @@
 #define EEPROM_ADDRESS_2 51
 #define EEPROM_ADDRESS_3 52
 #endif
-
 
 // ATtiny25/45/85 Pin map
 //                                 +-\/-+
@@ -214,7 +212,7 @@ int main(void) {
 				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
 #endif
 
-				/* power on BMP085 and DHT22 */
+				/* power on BMP085 */
 
 				SWITCH_DDR |= (1 << SWITCH_PIN);
 				SWITCH_PORT |= (1 << SWITCH_PIN);
@@ -225,15 +223,7 @@ int main(void) {
 				BMP085_DATA_t bmp_data;
 				BMP085_ERROR_t error = bmp085_readall(&bmp_data);
 
-				/* wait for DHT22 to start (at least 2000 ms consecutive). */
-				_delay_ms(1500);
-
-				DHT22_DATA_t dht22_data;
-				DHT22_ERROR_t dht22_error;
-
-				dht22_error = readDHT22(&dht22_data);
-
-				/* power off DHT22 and BMP085 */
+				/* power off BMP085 */
 				SWITCH_PORT &= ~(1 << SWITCH_PIN);
 
 				setup_mirf();
@@ -251,10 +241,7 @@ int main(void) {
 						bmp_data.temperature_integral,
 						bmp_data.temperature_decimal, bmp_data.pressure_1,
 						bmp_data.pressure_2, bmp_data.pressure_3,
-						bmp_data.pressure_4, dht22_data.temperature_integral,
-						dht22_data.temperature_decimal,
-						dht22_data.humidity_integral,
-						dht22_data.humidity_decimal, dht22_error, counter,
+						bmp_data.pressure_4, 0, 0, 0, 0, 0, counter,
 						error.total_errors };
 
 				mirf_flush_rx_tx();					// flush TX/RX
