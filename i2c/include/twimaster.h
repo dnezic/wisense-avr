@@ -74,7 +74,7 @@
 #define USI_OVERFLOW_VECTOR USI_OVF_vect
 #endif
 
-#if defined( __AVR_ATtiny24__ ) | defined( __AVR_ATtiny44__ ) | defined( __AVR_ATtiny84__ )
+#if defined( __AVR_ATtiny24__ ) | defined( __AVR_ATtiny44__ ) | defined( __AVR_ATtiny84__ ) | defined( __AVR_ATtiny84A__ )
 #define DDR_USI             DDRA
 #define PORT_USI            PORTA
 #define PIN_USI             PINA

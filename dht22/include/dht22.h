@@ -29,6 +29,14 @@
 #define DHT22_PORT_IN PINB
 #endif
 
+#ifdef __AVR_ATtiny85__
+#define DHT22_PIN PINB3
+#define DHT22_DDR DDRB
+#define DHT22_PORT_OUT PORTB
+#define DHT22_PORT_IN PINB
+#endif
+
+
 
 typedef enum
 {
