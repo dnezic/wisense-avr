@@ -26,7 +26,7 @@
 #include <avr/sfr_defs.h>
 #include <avr/sleep.h>
 #include <avr/eeprom.h>
-#include <bmp085.h>
+#include <bme280.h>
 #include <mirf.h>
 #include <nRF24L01.h>
 #include <spi.h>
@@ -220,8 +220,8 @@ int main(void) {
 				/* wait for BMP085 to start. */
 				_delay_ms(1500);
 
-				BMP085_DATA_t bmp_data;
-				BMP085_ERROR_t error = bmp085_readall(&bmp_data);
+				BME280_DATA_t bme_data;
+				BME280_ERROR_t error = bme280_readall(&bme_data);
 
 				/* power off BMP085 */
 				SWITCH_PORT &= ~(1 << SWITCH_PIN);
@@ -238,10 +238,10 @@ int main(void) {
 #endif
 
 				uint8_t buffer[BUFFERSIZE] = { voltage >> 8, voltage & 0xff,
-						bmp_data.temperature_integral,
-						bmp_data.temperature_decimal, bmp_data.pressure_1,
-						bmp_data.pressure_2, bmp_data.pressure_3,
-						bmp_data.pressure_4, 0, 0, 0, 0, 0, counter,
+						bme_data.temperature_integral,
+						bme_data.temperature_decimal, bme_data.pressure_1,
+						bme_data.pressure_2, bme_data.pressure_3,
+						0, bme_data.humidity, 0, 0, 0, 0, counter,
 						error.total_errors };
 
 				mirf_flush_rx_tx();					// flush TX/RX
