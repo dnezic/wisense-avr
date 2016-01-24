@@ -1,4 +1,9 @@
 eclipse.preferences.version=1
+environment/project/de.innot.avreclipse.configuration.lib.release.1825161350/AVRTARGETFCPU/delimiter=\:
+environment/project/de.innot.avreclipse.configuration.lib.release.1825161350/AVRTARGETFCPU/operation=replace
+environment/project/de.innot.avreclipse.configuration.lib.release.1825161350/AVRTARGETFCPU/value=8000000
+environment/project/de.innot.avreclipse.configuration.lib.release.1825161350/append=true
+environment/project/de.innot.avreclipse.configuration.lib.release.1825161350/appendContributed=true
 org.eclipse.cdt.core.formatter.alignment_for_arguments_in_method_invocation=16
 org.eclipse.cdt.core.formatter.alignment_for_assignment=16
 org.eclipse.cdt.core.formatter.alignment_for_base_clause_in_type_declaration=80

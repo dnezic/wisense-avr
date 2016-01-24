@@ -33,12 +33,6 @@
 #define __BME280_STATUS 0xF3  // Status
 #define __BME280_DATA_REG 0xF7  // Start of data registers (support shadowing)
 
-struct sensor_result {
-    float temperature;
-    float pressure;
-    float humidity;
-};
-
 typedef struct
 {
 	int8_t temperature_integral;
@@ -46,7 +40,6 @@ typedef struct
 	uint8_t pressure_1;
 	uint8_t pressure_2;
 	uint8_t pressure_3;
-	uint8_t pressure_4;
 	uint8_t humidity;
 } BME280_DATA_t;
 
@@ -57,6 +50,6 @@ typedef struct
 	uint8_t total_errors;
 } BME280_ERROR_t;
 
-extern BME280_ERROR_t read_all(BME280_DATA_t *data);
+extern BME280_ERROR_t bme280_readall(BME280_DATA_t *data);
 
 #endif /* BME280_H_ */
