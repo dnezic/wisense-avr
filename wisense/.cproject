@@ -1,89 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
-		<cconfiguration id="de.innot.avreclipse.configuration.app.debug.1499210002">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="de.innot.avreclipse.configuration.app.debug.1499210002" moduleId="org.eclipse.cdt.core.settings" name="Debug">
-				<externalSettings/>
-				<extensions>
-					<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
-				</extensions>
-			</storageModule>
-			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildArtefactType="de.innot.avreclipse.buildArtefactType.app" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=de.innot.avreclipse.buildArtefactType.app" description="" id="de.innot.avreclipse.configuration.app.debug.1499210002" name="Debug" parent="de.innot.avreclipse.configuration.app.debug">
-					<folderInfo id="de.innot.avreclipse.configuration.app.debug.1499210002." name="/" resourcePath="">
-						<toolChain id="de.innot.avreclipse.toolchain.winavr.app.debug.41612537" name="AVR-GCC Toolchain" superClass="de.innot.avreclipse.toolchain.winavr.app.debug">
-							<targetPlatform id="de.innot.avreclipse.targetplatform.winavr.app.debug.19034221" name="AVR Cross-Target" superClass="de.innot.avreclipse.targetplatform.winavr.app.debug"/>
-							<builder buildPath="${workspace_loc:/avr}/Debug" id="de.innot.avreclipse.target.builder.winavr.app.debug.606377733" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="AVR GNU Make Builder" superClass="de.innot.avreclipse.target.builder.winavr.app.debug"/>
-							<tool id="de.innot.avreclipse.tool.assembler.winavr.app.debug.1125587434" name="AVR Assembler" superClass="de.innot.avreclipse.tool.assembler.winavr.app.debug">
-								<option id="de.innot.avreclipse.assembler.option.debug.level.1270775489" name="Generate Debugging Info" superClass="de.innot.avreclipse.assembler.option.debug.level"/>
-								<inputType id="de.innot.avreclipse.tool.assembler.input.567848352" superClass="de.innot.avreclipse.tool.assembler.input"/>
-							</tool>
-							<tool id="de.innot.avreclipse.tool.compiler.winavr.app.debug.1135271651" name="AVR Compiler" superClass="de.innot.avreclipse.tool.compiler.winavr.app.debug">
-								<option id="de.innot.avreclipse.compiler.option.debug.level.1512081221" name="Generate Debugging Info" superClass="de.innot.avreclipse.compiler.option.debug.level"/>
-								<option id="de.innot.avreclipse.compiler.option.optimize.925110674" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize"/>
-								<option id="de.innot.avreclipse.compiler.option.incpath.196634342" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nRF24L01P/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dht22/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/vcc/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/i2c/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bmp_085/include}&quot;"/>
-								</option>
-								<inputType id="de.innot.avreclipse.compiler.winavr.input.592055872" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
-							</tool>
-							<tool id="de.innot.avreclipse.tool.cppcompiler.app.debug.521355605" name="AVR C++ Compiler" superClass="de.innot.avreclipse.tool.cppcompiler.app.debug">
-								<option id="de.innot.avreclipse.cppcompiler.option.debug.level.1991784834" name="Generate Debugging Info" superClass="de.innot.avreclipse.cppcompiler.option.debug.level"/>
-								<option id="de.innot.avreclipse.cppcompiler.option.optimize.1971867684" name="Optimization Level" superClass="de.innot.avreclipse.cppcompiler.option.optimize"/>
-							</tool>
-							<tool id="de.innot.avreclipse.tool.linker.winavr.app.debug.460782494" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.debug">
-								<option id="de.innot.avreclipse.linker.option.libpath.736244132" name="Libraries Path (-L)" superClass="de.innot.avreclipse.linker.option.libpath" valueType="stringList">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nRF24L01P/lib}&quot;"/>
-								</option>
-								<option id="de.innot.avreclipse.linker.option.libs.354770387" name="Libraries (-l)" superClass="de.innot.avreclipse.linker.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="nRF24L01P"/>
-									<listOptionValue builtIn="false" value="vcc"/>
-									<listOptionValue builtIn="false" value="dht22"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="&quot;${workspace_loc:/avr/bmp_085}&quot;"/>
-								</option>
-								<inputType id="de.innot.avreclipse.tool.linker.input.327399984" name="OBJ Files" superClass="de.innot.avreclipse.tool.linker.input">
-									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
-									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
-								</inputType>
-							</tool>
-							<tool id="de.innot.avreclipse.tool.cpplinker.app.debug.1897286590" name="AVR C++ Linker" superClass="de.innot.avreclipse.tool.cpplinker.app.debug"/>
-							<tool id="de.innot.avreclipse.tool.archiver.winavr.base.1970410636" name="AVR Archiver" superClass="de.innot.avreclipse.tool.archiver.winavr.base"/>
-							<tool id="de.innot.avreclipse.tool.objdump.winavr.app.debug.516209288" name="AVR Create Extended Listing" superClass="de.innot.avreclipse.tool.objdump.winavr.app.debug"/>
-							<tool id="de.innot.avreclipse.tool.objcopy.flash.winavr.app.debug.296211784" name="AVR Create Flash image" superClass="de.innot.avreclipse.tool.objcopy.flash.winavr.app.debug"/>
-							<tool id="de.innot.avreclipse.tool.objcopy.eeprom.winavr.app.debug.1276443338" name="AVR Create EEPROM image" superClass="de.innot.avreclipse.tool.objcopy.eeprom.winavr.app.debug"/>
-							<tool id="de.innot.avreclipse.tool.size.winavr.app.debug.1298511208" name="Print Size" superClass="de.innot.avreclipse.tool.size.winavr.app.debug"/>
-							<tool id="de.innot.avreclipse.tool.avrdude.app.debug.451023618" name="AVRDude" superClass="de.innot.avreclipse.tool.avrdude.app.debug"/>
-						</toolChain>
-					</folderInfo>
-				</configuration>
-			</storageModule>
-			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
-				<externalSettings containerId="dht22;de.innot.avreclipse.configuration.lib.release.724565992" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
-				<externalSettings containerId="ledtest;de.innot.avreclipse.configuration.app.release.1781068125" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
-				<externalSettings containerId="nRF24L01P;de.innot.avreclipse.configuration.lib.release.755111345" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
-				<externalSettings containerId="vcc;de.innot.avreclipse.configuration.lib.release.1368394078" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
-			</storageModule>
-		</cconfiguration>
 		<cconfiguration id="de.innot.avreclipse.configuration.app.release.1198306195">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="de.innot.avreclipse.configuration.app.release.1198306195" moduleId="org.eclipse.cdt.core.settings" name="Release">
 				<externalSettings/>
 				<extensions>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildArtefactType="de.innot.avreclipse.buildArtefactType.app" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=de.innot.avreclipse.buildArtefactType.app" description="" id="de.innot.avreclipse.configuration.app.release.1198306195" name="Release" parent="de.innot.avreclipse.configuration.app.release">
+				<configuration artifactName="${ProjName}" buildArtefactType="de.innot.avreclipse.buildArtefactType.app" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=de.innot.avreclipse.buildArtefactType.app,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" description="" id="de.innot.avreclipse.configuration.app.release.1198306195" name="Release" parent="de.innot.avreclipse.configuration.app.release">
 					<folderInfo id="de.innot.avreclipse.configuration.app.release.1198306195." name="/" resourcePath="">
 						<toolChain id="de.innot.avreclipse.toolchain.winavr.app.release.614360339" name="AVR-GCC Toolchain" superClass="de.innot.avreclipse.toolchain.winavr.app.release">
 							<option id="de.innot.avreclipse.toolchain.options.toolchain.objcopy.flash.app.release.535938262" name="Generate HEX file for Flash memory" superClass="de.innot.avreclipse.toolchain.options.toolchain.objcopy.flash.app.release"/>
@@ -103,7 +33,8 @@
 								<option id="de.innot.avreclipse.compiler.option.incpath.1856265655" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nRF24L01P/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/vcc/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bmp_085/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/owd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bme_280/include}&quot;"/>
 								</option>
 								<inputType id="de.innot.avreclipse.compiler.winavr.input.2125669343" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
 							</tool>
@@ -113,13 +44,15 @@
 							</tool>
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.release.1425016985" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.release">
 								<option id="de.innot.avreclipse.linker.option.libs.1272865550" name="Libraries (-l)" superClass="de.innot.avreclipse.linker.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="nRF24L01P"/>
-									<listOptionValue builtIn="false" value="bmp_085"/>
-									<listOptionValue builtIn="false" value="i2c"/>
-									<listOptionValue builtIn="false" value="vcc"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="bme_280"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="i2c"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="owd"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="vcc"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="nRF24L01P"/>
 								</option>
 								<option id="de.innot.avreclipse.linker.option.libpath.760125693" name="Libraries Path (-L)" superClass="de.innot.avreclipse.linker.option.libpath" valueType="stringList">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bmp_085/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bme_280/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/owd/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/i2c/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nRF24L01P/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/vcc/Release}&quot;"/>
@@ -144,7 +77,8 @@
 				<externalSettings containerId="i2c;de.innot.avreclipse.configuration.lib.release.2111723458" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
 				<externalSettings containerId="nRF24L01P;de.innot.avreclipse.configuration.lib.release.755111345" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
 				<externalSettings containerId="vcc;de.innot.avreclipse.configuration.lib.release.1368394078" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
-				<externalSettings containerId="bmp_085;de.innot.avreclipse.configuration.lib.release.36479451" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
+				<externalSettings containerId="bme_280;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
+				<externalSettings containerId="owd;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
 			</storageModule>
 		</cconfiguration>
 	</storageModule>
@@ -153,13 +87,13 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="Release">
-			<resource resourceType="PROJECT" workspacePath="/avr"/>
-		</configuration>
 		<configuration configurationName="Multiple configurations">
 			<resource resourceType="PROJECT" workspacePath="/avr"/>
 		</configuration>
 		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/avr"/>
+		</configuration>
+		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/avr"/>
 		</configuration>
 	</storageModule>
@@ -175,4 +109,5 @@
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 		<buildTargets/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

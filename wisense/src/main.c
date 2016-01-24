@@ -26,12 +26,13 @@
 #include <avr/sfr_defs.h>
 #include <avr/sleep.h>
 #include <avr/eeprom.h>
-#include <bmp085.h>
+#include <bme280.h>
 #include <mirf.h>
 #include <nRF24L01.h>
 #include <spi.h>
 #include <util.h>
 #include <voltage.h>
+#include <owd.h>
 
 #define mirf_CH			0x50
 
@@ -45,17 +46,12 @@
 #endif
 
 #ifdef __AVR_ATtiny861A__
-/* used to power on BMP085 using PN2222. */
+/* used to power on BMP280 using PN2222. */
 #define SWITCH_PIN PORTB3
 #define SWITCH_DDR DDRB
 #define SWITCH_PORT PORTB
 #endif
 
-#ifdef DEBUG
-#define EEPROM_RESET_COUNTER 50
-#define EEPROM_ADDRESS_2 51
-#define EEPROM_ADDRESS_3 52
-#endif
 
 // ATtiny25/45/85 Pin map
 //                                 +-\/-+
@@ -173,9 +169,8 @@ int main(void) {
 	uint8_t counter = 0;
 
 #if DEBUG
-	uint8_t flow_byte;
-	uint8_t flow_byte_aux = 0;
-	uint8_t reset_counter = 0;
+	owd_init();
+
 #endif
 
 	//const uint8_t BUFFERSIZE = 16;
@@ -185,13 +180,6 @@ int main(void) {
 
 	setup_watchdog();
 
-#if DEBUG
-	/* store reset/power counter into eeprom */
-	reset_counter = eeprom_read_byte((uint8_t *) EEPROM_RESET_COUNTER);
-	reset_counter = reset_counter + 1;
-	eeprom_update_byte((uint8_t *) EEPROM_RESET_COUNTER, reset_counter);
-#endif
-
 	while (1) {
 
 		if (f_wdt == 1) {// wait for timed out watchdog / flag is set when a watchdog timeout occurs
@@ -199,29 +187,22 @@ int main(void) {
 			f_wdt = 0;			// reset flag
 			if (wait_counter >= wait_cycles) {
 
-#if DEBUG
-				flow_byte = 0;
-				flow_byte_aux = 0;
-
-#endif
-
 				/* important to be called first to get accurate readings */
 				voltage = read_vcc();
-
 #if DEBUG
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
+				owd_printf("V:%d\n", voltage);
 #endif
-
 				/* power on BMP085 */
 
 				SWITCH_DDR |= (1 << SWITCH_PIN);
 				SWITCH_PORT |= (1 << SWITCH_PIN);
 
-				/* wait for BMP085 to start. */
+				/* wait for BME280 to start. */
 				_delay_ms(1500);
 
-				BMP085_DATA_t bmp_data;
-				BMP085_ERROR_t error = bmp085_readall(&bmp_data);
+				BME280_DATA_t bme_data;
+				BME280_ERROR_t error;
+				error = bme280_readall(&bme_data);
 
 				/* power off BMP085 */
 				SWITCH_PORT &= ~(1 << SWITCH_PIN);
@@ -233,15 +214,11 @@ int main(void) {
 
 				wait_counter = 0;
 
-#if DEBUG
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
-#endif
-
 				uint8_t buffer[BUFFERSIZE] = { voltage >> 8, voltage & 0xff,
-						bmp_data.temperature_integral,
-						bmp_data.temperature_decimal, bmp_data.pressure_1,
-						bmp_data.pressure_2, bmp_data.pressure_3,
-						bmp_data.pressure_4, 0, 0, 0, 0, 0, counter,
+						bme_data.temperature_integral,
+						bme_data.temperature_decimal, bme_data.pressure_1,
+						bme_data.pressure_2, bme_data.pressure_3,
+						0, bme_data.humidity, 0, 0, 0, 0, counter,
 						error.total_errors };
 
 				mirf_flush_rx_tx();					// flush TX/RX
@@ -250,27 +227,17 @@ int main(void) {
 				// unnecessary delay ?
 				_delay_ms(50);
 
-#if DEBUG
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
-#endif
-
 				// If maximum retries were reached, reset MAX_RT
 				/* FIXME: we are doing broadcast with no ACK, so why sometimes program enters in this block? */
 				if (mirf_max_rt_reached()) {
 					mirf_config_register(STATUS, 1 << MAX_RT);
-#if DEBUG
-					eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_3,
-							++flow_byte_aux);
-#endif
 				}
-
 				mirf_powerdown();	// put device in power down mode
-
-#if DEBUG
-				eeprom_update_byte((uint8_t *) EEPROM_ADDRESS_2, ++flow_byte);
-#endif
 			}
 			counter = counter + 1;
+#if DEBUG
+			send_text("s.\n");
+#endif
 			system_sleep();
 		}
 

@@ -32,8 +32,8 @@
 //********** Defines **********//
 
 // TWI STANDARD mode timing limits. SCL <= 100kHz, F_CPU = 1000000
-#define T2_TWI    5 // >4,7us
-#define T4_TWI    4 // >4,0us
+#define T2_TWI    40 // >5, 4,7us
+#define T4_TWI    32 // >5, 4,0us
 
 
 /****************************************************************************
